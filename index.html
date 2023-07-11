@@ -163,7 +163,7 @@
     $(document).ready(function() {
       function updatePreview() {
         var embedPreview = $(".embed-preview");
-        var embedPreviewFields = embedPreview.find(".fields");
+        var embedPreviewFields = embedPreview.find(".field");
         var embedPreviewFooter = embedPreview.find(".footer");
 
         var fieldsHtml = "";
@@ -217,8 +217,8 @@
 
         var isValid = true;
 
-        if (webhookUrl.val() === "" || !webhookUrl.val().startsWith("https://discord.com/api/webhooks")) {
-          showError(webhookUrl, "Invalid webhook URL. It should start with 'https://discord.com/api/webhooks'");
+        if (webhookUrl.val() === "") {
+          showError(webhookUrl, "Webhook URL is required");
           isValid = false;
         } else {
           clearError(webhookUrl);
@@ -238,8 +238,8 @@
         var fieldCount = $(".field").length;
         var fieldHTML = `
           <div class="field">
-            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}" placeholder="Field ${fieldCount} Name" oninput="updatePreview()">
-            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}" placeholder="Field ${fieldCount} Value" oninput="updatePreview()">
+            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}" placeholder="Field ${fieldCount} Name">
+            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}" placeholder="Field ${fieldCount} Value">
             <i class="fas fa-trash-alt remove-field-btn" onclick="removeField(this)"></i>
           </div>
         `;
@@ -262,7 +262,7 @@
               {
                 title: $("#title").val(),
                 description: $("#description").val(),
-                color: parseInt($("#color").val().replace("#", ""), 16),
+                color: parseInt($("#color").val(), 16),
                 thumbnail: {
                   url: $("#thumbnailUrl").val()
                 },
@@ -296,12 +296,13 @@
           $.ajax({
             url: $("#webhookUrl").val(),
             type: "POST",
+            dataType: "json",
             data: JSON.stringify(data),
             success: function(response) {
               alert("Embed message sent successfully!");
             },
-            error: function(xhr, status, error) {
-              alert("Error sending embed message. Please try again. Error message: " + error);
+            error: function(error) {
+              alert("Error sending embed message. Please try again.");
             }
           });
         }
@@ -398,7 +399,7 @@
         <div class="preview">
           <h2>Embed Preview</h2>
           <div class="embed-preview">
-            <div class="fields"></div>
+            <div class="field"></div>
             <div class="footer"></div>
           </div>
         </div>
