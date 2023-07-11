@@ -262,7 +262,7 @@
               {
                 title: $("#title").val(),
                 description: $("#description").val(),
-                color: parseInt($("#color").val(), 16),
+                color: parseInt($("#color").val().replace("#", ""), 16),
                 thumbnail: {
                   url: $("#thumbnailUrl").val()
                 },
