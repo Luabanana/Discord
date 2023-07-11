@@ -296,13 +296,12 @@
           $.ajax({
             url: $("#webhookUrl").val(),
             type: "POST",
-            dataType: "text",
             data: JSON.stringify(data),
             success: function(response) {
               alert("Embed message sent successfully!");
             },
-            error: function(error) {
-              alert("Error sending embed message. Please try again.");
+            error: function(xhr, status, error) {
+              alert("Error sending embed message. Please try again. Error message: " + error);
             }
           });
         }
