@@ -108,47 +108,35 @@
       color: #fff;
     }
 
-    .preview .embed {
-      padding: 15px;
+    .embed-preview {
       border: 1px solid #3C4046;
       border-radius: 4px;
       background-color: #36393F;
-    }
-
-    .preview .embed-title {
-      margin: 0;
-      font-size: 16px;
-      font-weight: bold;
+      padding: 20px;
       color: #fff;
     }
 
-    .preview .embed-description {
-      margin: 10px 0;
-      font-size: 14px;
-      color: #DCDDDE;
-    }
-
-    .preview .embed-field {
+    .embed-preview .field {
       margin-bottom: 10px;
     }
 
-    .preview .embed-field-name {
+    .embed-preview .field-name {
       font-weight: bold;
       color: #fff;
     }
 
-    .preview .embed-field-value {
+    .embed-preview .field-value {
       margin-top: 3px;
       color: #DCDDDE;
     }
 
-    .preview .embed-footer {
+    .embed-preview .footer {
       margin-top: 10px;
       font-size: 12px;
       color: #888;
     }
 
-    .preview .embed-footer i {
+    .embed-preview .footer i {
       margin-right: 5px;
     }
 
@@ -175,52 +163,38 @@
     $(document).ready(function() {
       function updatePreview() {
         var embedPreview = $(".embed-preview");
-        var embedPreviewTitle = $(".embed-preview .embed-title");
-        var embedPreviewDescription = $(".embed-preview .embed-description");
-        var embedPreviewFields = $(".embed-preview .embed-field");
-        var embedPreviewFooter = $(".embed-preview .embed-footer");
+        var embedPreviewFields = embedPreview.find(".field");
+        var embedPreviewFooter = embedPreview.find(".footer");
 
-        var username = $("#username").val();
-        var avatarUrl = $("#avatarUrl").val();
-        var content = $("#content").val();
-        var title = $("#title").val();
-        var description = $("#description").val();
-        var color = parseInt($("#color").val(), 16);
-        var thumbnailUrl = $("#thumbnailUrl").val();
-        var authorName = $("#authorName").val();
-        var authorUrl = $("#authorUrl").val();
-        var authorIconUrl = $("#authorIconUrl").val();
-        var footerText = $("#footerText").val();
-        var footerIconUrl = $("#footerIconUrl").val();
+        var fieldsHtml = "";
 
-        embedPreviewTitle.text(title);
-        embedPreviewDescription.text(description);
-        embedPreview.css("border-color", "#" + color.toString(16));
-        embedPreview.css("color", "#" + color.toString(16));
+        $(".field").each(function(index) {
+          var fieldName = $(this).find("input[id^='fieldName']").val();
+          var fieldValue = $(this).find("input[id^='fieldValue']").val();
+          var fieldInline = $(this).find("input[type='checkbox']").is(":checked");
 
-        if (thumbnailUrl !== "") {
-          embedPreview.css("background-image", "url(" + thumbnailUrl + ")");
-          embedPreview.css("background-size", "cover");
-        } else {
-          embedPreview.css("background-image", "none");
-          embedPreview.css("background-color", "#36393F");
-        }
-
-        embedPreviewFields.each(function(index) {
-          var fieldName = $(this).find(".embed-field-name");
-          var fieldValue = $(this).find(".embed-field-value");
-
-          fieldName.text($("#fieldName" + index).val());
-          fieldValue.text($("#fieldValue" + index).val());
+          fieldsHtml += `
+            <div class="field">
+              <span class="field-name">${fieldName}</span>: <span class="field-value">${fieldValue}</span>
+            </div>
+          `;
         });
 
+        embedPreviewFields.html(fieldsHtml);
+
+        var footerText = $("#footerText").val();
+        var footerIconUrl = $("#footerIconUrl").val();
+        var footerHtml = "";
+
         if (footerText !== "") {
-          embedPreviewFooter.html('<i class="fas fa-info-circle"></i>' + footerText);
-          embedPreviewFooter.css("display", "block");
-        } else {
-          embedPreviewFooter.text("");
-          embedPreviewFooter.css("display", "none");
+          footerHtml = `
+            <div class="footer">
+              <i class="fas fa-info-circle"></i>${footerText}
+            </div>
+          `;
         }
+
+        embedPreviewFooter.html(footerHtml);
       }
 
       function showError(input, message) {
@@ -423,11 +397,9 @@
         </div>
         <div class="preview">
           <h2>Embed Preview</h2>
-          <div class="embed embed-preview">
-            <div class="embed-title"></div>
-            <div class="embed-description"></div>
-            <div class="embed-field"></div>
-            <div class="embed-footer"></div>
+          <div class="embed-preview">
+            <div class="field"></div>
+            <div class="footer"></div>
           </div>
         </div>
       </div>
