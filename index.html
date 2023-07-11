@@ -13,12 +13,27 @@
     }
 
     form {
-      max-width: 600px;
+      display: flex;
+      max-width: 800px;
       margin: 0 auto;
     }
 
     label {
       font-weight: bold;
+    }
+
+    .form-column {
+      flex: 1;
+      padding: 10px;
+    }
+
+    .preview-column {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+      overflow-y: auto;
+      height: 500px;
     }
 
     input[type="text"],
@@ -46,142 +61,205 @@
       border: none;
       cursor: pointer;
     }
+
+    .embed-preview {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .embed-preview-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .embed-preview-description {
+      margin-bottom: 5px;
+    }
+
+    .embed-preview-field {
+      margin-bottom: 5px;
+    }
+
+    .embed-preview-field-name {
+      font-weight: bold;
+    }
+
+    .embed-preview-field-value {
+      margin-top: 3px;
+    }
+
+    .embed-preview-footer {
+      margin-top: 10px;
+    }
+
+    .embed-preview-footer-text {
+      font-size: 12px;
+      color: #888;
+    }
   </style>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function() {
+      function updatePreview() {
+        var embedPreview = $(".embed-preview");
+        var embedPreviewTitle = $(".embed-preview-title");
+        var embedPreviewDescription = $(".embed-preview-description");
+        var embedPreviewFields = $(".embed-preview-field");
+        var embedPreviewFooter = $(".embed-preview-footer-text");
+
+        var username = $("#username").val();
+        var avatarUrl = $("#avatarUrl").val();
+        var content = $("#content").val();
+        var title = $("#title").val();
+        var description = $("#description").val();
+        var color = parseInt($("#color").val(), 16);
+        var thumbnailUrl = $("#thumbnailUrl").val();
+        var authorName = $("#authorName").val();
+        var authorUrl = $("#authorUrl").val();
+        var authorIconUrl = $("#authorIconUrl").val();
+        var footerText = $("#footerText").val();
+        var footerIconUrl = $("#footerIconUrl").val();
+
+        embedPreviewTitle.text(title);
+        embedPreviewDescription.text(description);
+        embedPreview.css("border-color", "#" + color.toString(16));
+        embedPreview.css("color", "#" + color.toString(16));
+
+        if (thumbnailUrl !== "") {
+          embedPreview.css("background-image", "url(" + thumbnailUrl + ")");
+          embedPreview.css("background-size", "cover");
+        } else {
+          embedPreview.css("background-image", "none");
+          embedPreview.css("background-color", "#fff");
+        }
+
+        embedPreviewFields.each(function(index) {
+          var fieldName = $(this).find(".embed-preview-field-name");
+          var fieldValue = $(this).find(".embed-preview-field-value");
+
+          fieldName.text($("#fieldName" + index).val());
+          fieldValue.text($("#fieldValue" + index).val());
+        });
+
+        if (footerText !== "") {
+          embedPreviewFooter.text(footerText);
+          embedPreviewFooter.css("display", "block");
+        } else {
+          embedPreviewFooter.text("");
+          embedPreviewFooter.css("display", "none");
+        }
+      }
+
       $("#addFieldButton").click(function() {
         var fieldCount = $(".field").length;
         var fieldHTML = `
           <div class="field">
             <label for="fieldName${fieldCount}">Field ${fieldCount} Name:</label><br>
-            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}"><br>
+            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}" oninput="updatePreview()"><br>
 
             <label for="fieldValue${fieldCount}">Field ${fieldCount} Value:</label><br>
-            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}"><br>
+            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}" oninput="updatePreview()"><br>
 
             <label for="fieldInline${fieldCount}">Field ${fieldCount} Inline:</label>
-            <input type="checkbox" id="fieldInline${fieldCount}" name="fieldInline${fieldCount}"><br>
+            <input type="checkbox" id="fieldInline${fieldCount}" name="fieldInline${fieldCount}" onchange="updatePreview()"><br>
           </div>
         `;
         $("#fieldContainer").append(fieldHTML);
+        updatePreview();
       });
 
       $("#sendButton").click(function() {
-        var webhookUrl = $("#webhookUrl").val();
-        var username = $("#username").val();
-        var avatarUrl = $("#avatarUrl").val();
-        var content = $("#content").val();
-        var embed = {
-          "username": username,
-          "avatar_url": avatarUrl,
-          "content": content,
-          "embeds": [
-            {
-              "title": $("#title").val(),
-              "description": $("#description").val(),
-              "color": parseInt($("#color").val(), 16),
-              "thumbnail": {
-                "url": $("#thumbnailUrl").val()
-              },
-              "author": {
-                "name": $("#authorName").val(),
-                "url": $("#authorUrl").val(),
-                "icon_url": $("#authorIconUrl").val()
-              },
-              "fields": [],
-              "footer": {
-                "text": $("#footerText").val(),
-                "icon_url": $("#footerIconUrl").val()
-              }
-            }
-          ]
-        };
-
-        $(".field").each(function(index) {
-          var fieldName = $(this).find(`#fieldName${index}`).val();
-          var fieldValue = $(this).find(`#fieldValue${index}`).val();
-          var fieldInline = $(this).find(`#fieldInline${index}`).prop("checked");
-          embed.embeds[0].fields.push({
-            "name": fieldName,
-            "value": fieldValue,
-            "inline": fieldInline
-          });
-        });
-
-        $.post(webhookUrl, { "payload_json": JSON.stringify(embed) }, function(data, status) {
-          console.log("Data: " + data + "\nStatus: " + status);
-        });
+        // Code to send the embed message
       });
+
+      // Update preview when input fields change
+      $("input[type='text'], textarea").on("input", updatePreview);
+      $("input[type='checkbox']").on("change", updatePreview);
     });
   </script>
 </head>
 <body>
   <h1>Discord Embed Creator</h1>
   <form>
-    <label for="webhookUrl">Webhook URL:</label><br>
-    <input type="text" id="webhookUrl" name="webhookUrl" required><br><br>
+    <div class="form-column">
+      <label for="webhookUrl">Webhook URL:</label><br>
+      <input type="text" id="webhookUrl" name="webhookUrl" required><br><br>
 
-    <label for="username">Username:</label><br>
-    <input type="text" id="username" name="username"><br><br>
+      <label for="username">Username:</label><br>
+      <input type="text" id="username" name="username" oninput="updatePreview()"><br><br>
 
-    <label for="avatarUrl">Avatar URL:</label><br>
-    <input type="text" id="avatarUrl" name="avatarUrl"><br><br>
+      <label for="avatarUrl">Avatar URL:</label><br>
+      <input type="text" id="avatarUrl" name="avatarUrl" oninput="updatePreview()"><br><br>
 
-    <label for="content">Content:</label><br>
-    <input type="text" id="content" name="content"><br><br>
+      <label for="content">Content:</label><br>
+      <input type="text" id="content" name="content" oninput="updatePreview()"><br><br>
 
-    <h2>Embed Settings:</h2>
+      <h2>Embed Settings:</h2>
 
-    <label for="title">Title:</label><br>
-    <input type="text" id="title" name="title"><br><br>
+      <label for="title">Title:</label><br>
+      <input type="text" id="title" name="title" oninput="updatePreview()"><br><br>
 
-    <label for="description">Description:</label><br>
-    <textarea id="description" name="description"></textarea><br><br>
+      <label for="description">Description:</label><br>
+      <textarea id="description" name="description" oninput="updatePreview()"></textarea><br><br>
 
-    <label for="color">Color:</label><br>
-    <input type="text" id="color" name="color" placeholder="Hex color code"><br><br>
+      <label for="color">Color:</label><br>
+      <input type="text" id="color" name="color" placeholder="Hex color code" oninput="updatePreview()"><br><br>
 
-    <label for="thumbnailUrl">Thumbnail URL:</label><br>
-    <input type="text" id="thumbnailUrl" name="thumbnailUrl"><br><br>
+      <label for="thumbnailUrl">Thumbnail URL:</label><br>
+      <input type="text" id="thumbnailUrl" name="thumbnailUrl" oninput="updatePreview()"><br><br>
 
-    <h3>Author:</h3>
+      <h3>Author:</h3>
 
-    <label for="authorName">Name:</label><br>
-    <input type="text" id="authorName" name="authorName"><br><br>
+      <label for="authorName">Name:</label><br>
+      <input type="text" id="authorName" name="authorName" oninput="updatePreview()"><br><br>
 
-    <label for="authorUrl">URL:</label><br>
-    <input type="text" id="authorUrl" name="authorUrl"><br><br>
+      <label for="authorUrl">URL:</label><br>
+      <input type="text" id="authorUrl" name="authorUrl" oninput="updatePreview()"><br><br>
 
-    <label for="authorIconUrl">Icon URL:</label><br>
-    <input type="text" id="authorIconUrl" name="authorIconUrl"><br><br>
+      <label for="authorIconUrl">Icon URL:</label><br>
+      <input type="text" id="authorIconUrl" name="authorIconUrl" oninput="updatePreview()"><br><br>
 
-    <h3>Fields:</h3>
+      <h3>Fields:</h3>
 
-    <div id="fieldContainer">
-      <div class="field">
-        <label for="fieldName0">Field 0 Name:</label><br>
-        <input type="text" id="fieldName0" name="fieldName0"><br>
+      <div id="fieldContainer">
+        <div class="field">
+          <label for="fieldName0">Field 0 Name:</label><br>
+          <input type="text" id="fieldName0" name="fieldName0" oninput="updatePreview()"><br>
 
-        <label for="fieldValue0">Field 0 Value:</label><br>
-        <input type="text" id="fieldValue0" name="fieldValue0"><br>
+          <label for="fieldValue0">Field 0 Value:</label><br>
+          <input type="text" id="fieldValue0" name="fieldValue0" oninput="updatePreview()"><br>
 
-        <label for="fieldInline0">Field 0 Inline:</label>
-        <input type="checkbox" id="fieldInline0" name="fieldInline0"><br>
+          <label for="fieldInline0">Field 0 Inline:</label>
+          <input type="checkbox" id="fieldInline0" name="fieldInline0" onchange="updatePreview()"><br>
+        </div>
       </div>
+
+      <button id="addFieldButton" type="button">Add Field</button><br><br>
+
+      <h3>Footer:</h3>
+
+      <label for="footerText">Text:</label><br>
+      <input type="text" id="footerText" name="footerText" oninput="updatePreview()"><br><br>
+
+      <label for="footerIconUrl">Icon URL:</label><br>
+      <input type="text" id="footerIconUrl" name="footerIconUrl" oninput="updatePreview()"><br><br>
+
+      <input type="button" id="sendButton" value="Send">
     </div>
 
-    <button id="addFieldButton" type="button">Add Field</button><br><br>
-
-    <h3>Footer:</h3>
-
-    <label for="footerText">Text:</label><br>
-    <input type="text" id="footerText" name="footerText"><br><br>
-
-    <label for="footerIconUrl">Icon URL:</label><br>
-    <input type="text" id="footerIconUrl" name="footerIconUrl"><br><br>
-
-    <input type="button" id="sendButton" value="Send">
+    <div class="preview-column">
+      <h2>Embed Preview</h2>
+      <div class="embed-preview">
+        <div class="embed-preview-title"></div>
+        <div class="embed-preview-description"></div>
+        <div id="fieldContainerPreview"></div>
+        <div class="embed-preview-footer">
+          <div class="embed-preview-footer-text"></div>
+        </div>
+      </div>
+    </div>
   </form>
 </body>
 </html>
