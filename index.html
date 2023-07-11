@@ -217,8 +217,8 @@
 
         var isValid = true;
 
-        if (webhookUrl.val() === "") {
-          showError(webhookUrl, "Webhook URL is required");
+        if (webhookUrl.val() === "" || !webhookUrl.val().startsWith("https://discord.com/api/webhooks")) {
+          showError(webhookUrl, "Invalid webhook URL. It should start with 'https://discord.com/api/webhooks'");
           isValid = false;
         } else {
           clearError(webhookUrl);
@@ -238,8 +238,8 @@
         var fieldCount = $(".field").length;
         var fieldHTML = `
           <div class="field">
-            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}" placeholder="Field ${fieldCount} Name">
-            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}" placeholder="Field ${fieldCount} Value">
+            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}" placeholder="Field ${fieldCount} Name" oninput="updatePreview()">
+            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}" placeholder="Field ${fieldCount} Value" oninput="updatePreview()">
             <i class="fas fa-trash-alt remove-field-btn" onclick="removeField(this)"></i>
           </div>
         `;
@@ -296,7 +296,7 @@
           $.ajax({
             url: $("#webhookUrl").val(),
             type: "POST",
-            dataType: "json",
+            dataType: "text",
             data: JSON.stringify(data),
             success: function(response) {
               alert("Embed message sent successfully!");
