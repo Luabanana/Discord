@@ -2,101 +2,158 @@
 <html>
 <head>
   <title>Discord Embed Creator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f5f5f5;
     }
 
-    h1 {
+    .container {
+      width: 600px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      padding: 20px;
+      background-color: #7289DA;
+      color: #fff;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
       text-align: center;
     }
 
-    form {
-      display: flex;
-      max-width: 800px;
-      margin: 0 auto;
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
     }
 
-    label {
-      font-weight: bold;
+    .content {
+      padding: 20px;
     }
 
-    .form-column {
-      flex: 1;
-      padding: 10px;
-    }
-
-    .preview-column {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ddd;
-      background-color: #f9f9f9;
-      overflow-y: auto;
-      height: 500px;
-    }
-
-    input[type="text"],
-    textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-
-    input[type="checkbox"] {
-      margin-top: 5px;
-    }
-
-    #addFieldButton {
+    .form-group {
       margin-bottom: 20px;
     }
 
-    #sendButton {
+    .form-group label {
+      font-weight: bold;
       display: block;
-      margin: 0 auto;
-      padding: 10px 20px;
-      background-color: #7289DA;
-      color: #fff;
-      font-size: 16px;
-      border: none;
-      cursor: pointer;
+      margin-bottom: 5px;
     }
 
-    .embed-preview {
-      background-color: #fff;
-      border: 1px solid #ddd;
+    .form-group input[type="text"],
+    .form-group textarea {
+      width: 100%;
       padding: 10px;
-      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
     }
 
-    .embed-preview-title {
-      font-weight: bold;
-      margin-bottom: 5px;
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
     }
 
-    .embed-preview-description {
-      margin-bottom: 5px;
+    .form-group .add-field-btn {
+      font-size: 14px;
+      color: #7289DA;
+      cursor: pointer;
+      display: inline-block;
     }
 
-    .embed-preview-field {
-      margin-bottom: 5px;
-    }
-
-    .embed-preview-field-name {
-      font-weight: bold;
-    }
-
-    .embed-preview-field-value {
-      margin-top: 3px;
-    }
-
-    .embed-preview-footer {
+    .form-group .field-container {
       margin-top: 10px;
     }
 
-    .embed-preview-footer-text {
+    .form-group .field-container .field {
+      display: flex;
+      margin-bottom: 5px;
+    }
+
+    .form-group .field-container .field input[type="text"] {
+      flex: 1;
+    }
+
+    .form-group .field-container .field .remove-field-btn {
+      margin-left: 5px;
+      color: #dc3545;
+      cursor: pointer;
+    }
+
+    .preview {
+      padding: 20px;
+      background-color: #f5f5f5;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .preview h2 {
+      margin: 0;
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .preview .embed {
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .preview .embed-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .preview .embed-description {
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .preview .embed-field {
+      margin-bottom: 10px;
+    }
+
+    .preview .embed-field-name {
+      font-weight: bold;
+    }
+
+    .preview .embed-field-value {
+      margin-top: 3px;
+    }
+
+    .preview .embed-footer {
+      margin-top: 10px;
       font-size: 12px;
       color: #888;
+    }
+
+    .preview .embed-footer i {
+      margin-right: 5px;
+    }
+
+    .send-button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #7289DA;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
     }
   </style>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -104,10 +161,10 @@
     $(document).ready(function() {
       function updatePreview() {
         var embedPreview = $(".embed-preview");
-        var embedPreviewTitle = $(".embed-preview-title");
-        var embedPreviewDescription = $(".embed-preview-description");
-        var embedPreviewFields = $(".embed-preview-field");
-        var embedPreviewFooter = $(".embed-preview-footer-text");
+        var embedPreviewTitle = $(".embed-preview .embed-title");
+        var embedPreviewDescription = $(".embed-preview .embed-description");
+        var embedPreviewFields = $(".embed-preview .embed-field");
+        var embedPreviewFooter = $(".embed-preview .embed-footer");
 
         var username = $("#username").val();
         var avatarUrl = $("#avatarUrl").val();
@@ -136,15 +193,15 @@
         }
 
         embedPreviewFields.each(function(index) {
-          var fieldName = $(this).find(".embed-preview-field-name");
-          var fieldValue = $(this).find(".embed-preview-field-value");
+          var fieldName = $(this).find(".embed-field-name");
+          var fieldValue = $(this).find(".embed-field-value");
 
           fieldName.text($("#fieldName" + index).val());
           fieldValue.text($("#fieldValue" + index).val());
         });
 
         if (footerText !== "") {
-          embedPreviewFooter.text(footerText);
+          embedPreviewFooter.html('<i class="fas fa-info-circle"></i>' + footerText);
           embedPreviewFooter.css("display", "block");
         } else {
           embedPreviewFooter.text("");
@@ -156,19 +213,19 @@
         var fieldCount = $(".field").length;
         var fieldHTML = `
           <div class="field">
-            <label for="fieldName${fieldCount}">Field ${fieldCount} Name:</label><br>
-            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}" oninput="updatePreview()"><br>
-
-            <label for="fieldValue${fieldCount}">Field ${fieldCount} Value:</label><br>
-            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}" oninput="updatePreview()"><br>
-
-            <label for="fieldInline${fieldCount}">Field ${fieldCount} Inline:</label>
-            <input type="checkbox" id="fieldInline${fieldCount}" name="fieldInline${fieldCount}" onchange="updatePreview()"><br>
+            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}" placeholder="Field ${fieldCount} Name">
+            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}" placeholder="Field ${fieldCount} Value">
+            <i class="fas fa-trash-alt remove-field-btn" onclick="removeField(this)"></i>
           </div>
         `;
-        $("#fieldContainer").append(fieldHTML);
+        $(".field-container").append(fieldHTML);
         updatePreview();
       });
+
+      function removeField(btn) {
+        $(btn).parent().remove();
+        updatePreview();
+      }
 
       $("#sendButton").click(function() {
         // Code to send the embed message
@@ -181,85 +238,96 @@
   </script>
 </head>
 <body>
-  <h1>Discord Embed Creator</h1>
-  <form>
-    <div class="form-column">
-      <label for="webhookUrl">Webhook URL:</label><br>
-      <input type="text" id="webhookUrl" name="webhookUrl" required><br><br>
-
-      <label for="username">Username:</label><br>
-      <input type="text" id="username" name="username" oninput="updatePreview()"><br><br>
-
-      <label for="avatarUrl">Avatar URL:</label><br>
-      <input type="text" id="avatarUrl" name="avatarUrl" oninput="updatePreview()"><br><br>
-
-      <label for="content">Content:</label><br>
-      <input type="text" id="content" name="content" oninput="updatePreview()"><br><br>
-
-      <h2>Embed Settings:</h2>
-
-      <label for="title">Title:</label><br>
-      <input type="text" id="title" name="title" oninput="updatePreview()"><br><br>
-
-      <label for="description">Description:</label><br>
-      <textarea id="description" name="description" oninput="updatePreview()"></textarea><br><br>
-
-      <label for="color">Color:</label><br>
-      <input type="text" id="color" name="color" placeholder="Hex color code" oninput="updatePreview()"><br><br>
-
-      <label for="thumbnailUrl">Thumbnail URL:</label><br>
-      <input type="text" id="thumbnailUrl" name="thumbnailUrl" oninput="updatePreview()"><br><br>
-
-      <h3>Author:</h3>
-
-      <label for="authorName">Name:</label><br>
-      <input type="text" id="authorName" name="authorName" oninput="updatePreview()"><br><br>
-
-      <label for="authorUrl">URL:</label><br>
-      <input type="text" id="authorUrl" name="authorUrl" oninput="updatePreview()"><br><br>
-
-      <label for="authorIconUrl">Icon URL:</label><br>
-      <input type="text" id="authorIconUrl" name="authorIconUrl" oninput="updatePreview()"><br><br>
-
-      <h3>Fields:</h3>
-
-      <div id="fieldContainer">
-        <div class="field">
-          <label for="fieldName0">Field 0 Name:</label><br>
-          <input type="text" id="fieldName0" name="fieldName0" oninput="updatePreview()"><br>
-
-          <label for="fieldValue0">Field 0 Value:</label><br>
-          <input type="text" id="fieldValue0" name="fieldValue0" oninput="updatePreview()"><br>
-
-          <label for="fieldInline0">Field 0 Inline:</label>
-          <input type="checkbox" id="fieldInline0" name="fieldInline0" onchange="updatePreview()"><br>
+  <div class="container">
+    <div class="header">
+      <h1>Discord Embed Creator</h1>
+    </div>
+    <div class="content">
+      <div class="form-group">
+        <label for="webhookUrl">Webhook URL:</label>
+        <input type="text" id="webhookUrl" name="webhookUrl" required>
+      </div>
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Optional">
+      </div>
+      <div class="form-group">
+        <label for="avatarUrl">Avatar URL:</label>
+        <input type="text" id="avatarUrl" name="avatarUrl" placeholder="Optional">
+      </div>
+      <div class="form-group">
+        <label for="content">Content:</label>
+        <input type="text" id="content" name="content" placeholder="Optional">
+      </div>
+      <div class="form-group">
+        <h2>Embed Settings:</h2>
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input type="text" id="title" name="title" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea id="description" name="description" oninput="updatePreview()"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="color">Color:</label>
+          <input type="text" id="color" name="color" placeholder="Hex color code" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label for="thumbnailUrl">Thumbnail URL:</label>
+          <input type="text" id="thumbnailUrl" name="thumbnailUrl" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <h3>Author:</h3>
+          <div class="form-group">
+            <label for="authorName">Name:</label>
+            <input type="text" id="authorName" name="authorName" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label for="authorUrl">URL:</label>
+            <input type="text" id="authorUrl" name="authorUrl" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label for="authorIconUrl">Icon URL:</label>
+            <input type="text" id="authorIconUrl" name="authorIconUrl" oninput="updatePreview()">
+          </div>
+        </div>
+        <div class="form-group">
+          <h3>Fields:</h3>
+          <div class="field-container">
+            <div class="field">
+              <input type="text" id="fieldName0" name="fieldName0" placeholder="Field 0 Name" oninput="updatePreview()">
+              <input type="text" id="fieldValue0" name="fieldValue0" placeholder="Field 0 Value" oninput="updatePreview()">
+              <i class="fas fa-trash-alt remove-field-btn" onclick="removeField(this)"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <span class="add-field-btn" id="addFieldButton">Add Field</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <h3>Footer:</h3>
+          <div class="form-group">
+            <label for="footerText">Text:</label>
+            <input type="text" id="footerText" name="footerText" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label for="footerIconUrl">Icon URL:</label>
+            <input type="text" id="footerIconUrl" name="footerIconUrl" oninput="updatePreview()">
+          </div>
+        </div>
+        <div class="preview">
+          <h2>Embed Preview</h2>
+          <div class="embed embed-preview">
+            <div class="embed-title"></div>
+            <div class="embed-description"></div>
+            <div class="embed-field"></div>
+            <div class="embed-footer"></div>
+          </div>
         </div>
       </div>
-
-      <button id="addFieldButton" type="button">Add Field</button><br><br>
-
-      <h3>Footer:</h3>
-
-      <label for="footerText">Text:</label><br>
-      <input type="text" id="footerText" name="footerText" oninput="updatePreview()"><br><br>
-
-      <label for="footerIconUrl">Icon URL:</label><br>
-      <input type="text" id="footerIconUrl" name="footerIconUrl" oninput="updatePreview()"><br><br>
-
-      <input type="button" id="sendButton" value="Send">
     </div>
-
-    <div class="preview-column">
-      <h2>Embed Preview</h2>
-      <div class="embed-preview">
-        <div class="embed-preview-title"></div>
-        <div class="embed-preview-description"></div>
-        <div id="fieldContainerPreview"></div>
-        <div class="embed-preview-footer">
-          <div class="embed-preview-footer-text"></div>
-        </div>
-      </div>
-    </div>
-  </form>
+  </div>
+  <script src="https://kit.fontawesome.com/6a5f3b4a1f.js" crossorigin="anonymous"></script>
 </body>
 </html>
