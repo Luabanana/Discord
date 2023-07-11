@@ -5,6 +5,23 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function() {
+      $("#addFieldButton").click(function() {
+        var fieldCount = $(".field").length;
+        var fieldHTML = `
+          <div class="field">
+            <label for="fieldName${fieldCount}">Field ${fieldCount} Name:</label><br>
+            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}"><br><br>
+
+            <label for="fieldValue${fieldCount}">Field ${fieldCount} Value:</label><br>
+            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}"><br><br>
+
+            <label for="fieldInline${fieldCount}">Field ${fieldCount} Inline:</label>
+            <input type="checkbox" id="fieldInline${fieldCount}" name="fieldInline${fieldCount}"><br><br>
+          </div>
+        `;
+        $("#fieldContainer").append(fieldHTML);
+      });
+
       $("#sendButton").click(function() {
         var webhookUrl = $("#webhookUrl").val();
         var username = $("#username").val();
@@ -19,29 +36,33 @@
               "title": $("#title").val(),
               "description": $("#description").val(),
               "color": parseInt($("#color").val(), 16),
-              "fields": [
-                {
-                  "name": $("#fieldName1").val(),
-                  "value": $("#fieldValue1").val(),
-                  "inline": ($("#fieldInline1").prop("checked")) ? true : false
-                },
-                {
-                  "name": $("#fieldName2").val(),
-                  "value": $("#fieldValue2").val(),
-                  "inline": ($("#fieldInline2").prop("checked")) ? true : false
-                },
-                {
-                  "name": $("#fieldName3").val(),
-                  "value": $("#fieldValue3").val(),
-                  "inline": ($("#fieldInline3").prop("checked")) ? true : false
-                }
-              ],
+              "thumbnail": {
+                "url": $("#thumbnailUrl").val()
+              },
+              "author": {
+                "name": $("#authorName").val(),
+                "url": $("#authorUrl").val(),
+                "icon_url": $("#authorIconUrl").val()
+              },
+              "fields": [],
               "footer": {
-                "text": $("#footerText").val()
+                "text": $("#footerText").val(),
+                "icon_url": $("#footerIconUrl").val()
               }
             }
           ]
         };
+
+        $(".field").each(function(index) {
+          var fieldName = $(this).find(`#fieldName${index}`).val();
+          var fieldValue = $(this).find(`#fieldValue${index}`).val();
+          var fieldInline = $(this).find(`#fieldInline${index}`).prop("checked");
+          embed.embeds[0].fields.push({
+            "name": fieldName,
+            "value": fieldValue,
+            "inline": fieldInline
+          });
+        });
 
         $.post(webhookUrl, { "payload_json": JSON.stringify(embed) }, function(data, status) {
           console.log("Data: " + data + "\nStatus: " + status);
@@ -76,37 +97,44 @@
     <label for="color">Color:</label><br>
     <input type="text" id="color" name="color" placeholder="Hex color code"><br><br>
 
+    <label for="thumbnailUrl">Thumbnail URL:</label><br>
+    <input type="text" id="thumbnailUrl" name="thumbnailUrl"><br><br>
+
+    <h3>Author:</h3>
+
+    <label for="authorName">Name:</label><br>
+    <input type="text" id="authorName" name="authorName"><br><br>
+
+    <label for="authorUrl">URL:</label><br>
+    <input type="text" id="authorUrl" name="authorUrl"><br><br>
+
+    <label for="authorIconUrl">Icon URL:</label><br>
+    <input type="text" id="authorIconUrl" name="authorIconUrl"><br><br>
+
     <h3>Fields:</h3>
 
-    <label for="fieldName1">Field 1 Name:</label><br>
-    <input type="text" id="fieldName1" name="fieldName1"><br><br>
+    <div id="fieldContainer">
+      <div class="field">
+        <label for="fieldName0">Field 0 Name:</label><br>
+        <input type="text" id="fieldName0" name="fieldName0"><br><br>
 
-    <label for="fieldValue1">Field 1 Value:</label><br>
-    <input type="text" id="fieldValue1" name="fieldValue1"><br><br>
+        <label for="fieldValue0">Field 0 Value:</label><br>
+        <input type="text" id="fieldValue0" name="fieldValue0"><br><br>
 
-    <label for="fieldInline1">Field 1 Inline:</label>
-    <input type="checkbox" id="fieldInline1" name="fieldInline1"><br><br>
+        <label for="fieldInline0">Field 0 Inline:</label>
+        <input type="checkbox" id="fieldInline0" name="fieldInline0"><br><br>
+      </div>
+    </div>
 
-    <label for="fieldName2">Field 2 Name:</label><br>
-    <input type="text" id="fieldName2" name="fieldName2"><br><br>
+    <button id="addFieldButton" type="button">Add Field</button><br><br>
 
-    <label for="fieldValue2">Field 2 Value:</label><br>
-    <input type="text" id="fieldValue2" name="fieldValue2"><br><br>
+    <h3>Footer:</h3>
 
-    <label for="fieldInline2">Field 2 Inline:</label>
-    <input type="checkbox" id="fieldInline2" name="fieldInline2"><br><br>
-
-    <label for="fieldName3">Field 3 Name:</label><br>
-    <input type="text" id="fieldName3" name="fieldName3"><br><br>
-
-    <label for="fieldValue3">Field 3 Value:</label><br>
-    <input type="text" id="fieldValue3" name="fieldValue3"><br><br>
-
-    <label for="fieldInline3">Field 3 Inline:</label>
-    <input type="checkbox" id="fieldInline3" name="fieldInline3"><br><br>
-
-    <label for="footerText">Footer Text:</label><br>
+    <label for="footerText">Text:</label><br>
     <input type="text" id="footerText" name="footerText"><br><br>
+
+    <label for="footerIconUrl">Icon URL:</label><br>
+    <input type="text" id="footerIconUrl" name="footerIconUrl"><br><br>
 
     <input type="button" id="sendButton" value="Send">
   </form>
