@@ -2,6 +2,51 @@
 <html>
 <head>
   <title>Discord Embed Creator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    input[type="checkbox"] {
+      margin-top: 5px;
+    }
+
+    #addFieldButton {
+      margin-bottom: 20px;
+    }
+
+    #sendButton {
+      display: block;
+      margin: 0 auto;
+      padding: 10px 20px;
+      background-color: #7289DA;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function() {
@@ -10,13 +55,13 @@
         var fieldHTML = `
           <div class="field">
             <label for="fieldName${fieldCount}">Field ${fieldCount} Name:</label><br>
-            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}"><br><br>
+            <input type="text" id="fieldName${fieldCount}" name="fieldName${fieldCount}"><br>
 
             <label for="fieldValue${fieldCount}">Field ${fieldCount} Value:</label><br>
-            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}"><br><br>
+            <input type="text" id="fieldValue${fieldCount}" name="fieldValue${fieldCount}"><br>
 
             <label for="fieldInline${fieldCount}">Field ${fieldCount} Inline:</label>
-            <input type="checkbox" id="fieldInline${fieldCount}" name="fieldInline${fieldCount}"><br><br>
+            <input type="checkbox" id="fieldInline${fieldCount}" name="fieldInline${fieldCount}"><br>
           </div>
         `;
         $("#fieldContainer").append(fieldHTML);
@@ -116,13 +161,13 @@
     <div id="fieldContainer">
       <div class="field">
         <label for="fieldName0">Field 0 Name:</label><br>
-        <input type="text" id="fieldName0" name="fieldName0"><br><br>
+        <input type="text" id="fieldName0" name="fieldName0"><br>
 
         <label for="fieldValue0">Field 0 Value:</label><br>
-        <input type="text" id="fieldValue0" name="fieldValue0"><br><br>
+        <input type="text" id="fieldValue0" name="fieldValue0"><br>
 
         <label for="fieldInline0">Field 0 Inline:</label>
-        <input type="checkbox" id="fieldInline0" name="fieldInline0"><br><br>
+        <input type="checkbox" id="fieldInline0" name="fieldInline0"><br>
       </div>
     </div>
 
