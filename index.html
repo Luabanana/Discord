@@ -155,6 +155,11 @@
       font-weight: bold;
       cursor: pointer;
     }
+
+    .error-message {
+      color: #dc3545;
+      margin-top: 5px;
+    }
   </style>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
@@ -209,6 +214,43 @@
         }
       }
 
+      function showError(input, message) {
+        var formGroup = input.closest(".form-group");
+        formGroup.addClass("has-error");
+        var errorMessage = formGroup.find(".error-message");
+        errorMessage.text(message);
+      }
+
+      function clearError(input) {
+        var formGroup = input.closest(".form-group");
+        formGroup.removeClass("has-error");
+        var errorMessage = formGroup.find(".error-message");
+        errorMessage.text("");
+      }
+
+      function validateForm() {
+        var webhookUrl = $("#webhookUrl");
+        var title = $("#title");
+
+        var isValid = true;
+
+        if (webhookUrl.val() === "") {
+          showError(webhookUrl, "Webhook URL is required");
+          isValid = false;
+        } else {
+          clearError(webhookUrl);
+        }
+
+        if (title.val() === "") {
+          showError(title, "Title is required");
+          isValid = false;
+        } else {
+          clearError(title);
+        }
+
+        return isValid;
+      }
+
       $("#addFieldButton").click(function() {
         var fieldCount = $(".field").length;
         var fieldHTML = `
@@ -228,7 +270,59 @@
       }
 
       $("#sendButton").click(function() {
-        // Code to send the embed message
+        if (validateForm()) {
+          var data = {
+            username: $("#username").val(),
+            avatar_url: $("#avatarUrl").val(),
+            content: $("#content").val(),
+            embeds: [
+              {
+                title: $("#title").val(),
+                description: $("#description").val(),
+                color: parseInt($("#color").val(), 16),
+                thumbnail: {
+                  url: $("#thumbnailUrl").val()
+                },
+                author: {
+                  name: $("#authorName").val(),
+                  url: $("#authorUrl").val(),
+                  icon_url: $("#authorIconUrl").val()
+                },
+                fields: []
+              }
+            ],
+            footer: {
+              text: $("#footerText").val(),
+              icon_url: $("#footerIconUrl").val()
+            }
+          };
+
+          $(".field").each(function(index) {
+            var fieldName = $(this).find("input[id^='fieldName']").val();
+            var fieldValue = $(this).find("input[id^='fieldValue']").val();
+            var fieldInline = $(this).find("input[type='checkbox']").is(":checked");
+
+            data.embeds[0].fields.push({
+              name: fieldName,
+              value: fieldValue,
+              inline: fieldInline
+            });
+          });
+
+          // Send data to webhook
+          $.ajax({
+            url: $("#webhookUrl").val(),
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function(response) {
+              alert("Embed message sent successfully!");
+            },
+            error: function(error) {
+              alert("Error sending embed message. Please try again.");
+            }
+          });
+        }
       });
 
       // Update preview when input fields change
@@ -246,6 +340,7 @@
       <div class="form-group">
         <label for="webhookUrl">Webhook URL:</label>
         <input type="text" id="webhookUrl" name="webhookUrl" required>
+        <span class="error-message"></span>
       </div>
       <div class="form-group">
         <label for="username">Username:</label>
@@ -264,6 +359,7 @@
         <div class="form-group">
           <label for="title">Title:</label>
           <input type="text" id="title" name="title" oninput="updatePreview()">
+          <span class="error-message"></span>
         </div>
         <div class="form-group">
           <label for="description">Description:</label>
