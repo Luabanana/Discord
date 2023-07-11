@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Discord Embed Creator</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#sendButton").click(function() {
+        var webhookUrl = $("#webhookUrl").val();
+        var username = $("#username").val();
+        var avatarUrl = $("#avatarUrl").val();
+        var content = $("#content").val();
+        var embed = {
+          "username": username,
+          "avatar_url": avatarUrl,
+          "content": content,
+          "embeds": [
+            {
+              "title": $("#title").val(),
+              "description": $("#description").val(),
+              "color": parseInt($("#color").val(), 16),
+              "fields": [
+                {
+                  "name": $("#fieldName1").val(),
+                  "value": $("#fieldValue1").val(),
+                  "inline": ($("#fieldInline1").prop("checked")) ? true : false
+                },
+                {
+                  "name": $("#fieldName2").val(),
+                  "value": $("#fieldValue2").val(),
+                  "inline": ($("#fieldInline2").prop("checked")) ? true : false
+                },
+                {
+                  "name": $("#fieldName3").val(),
+                  "value": $("#fieldValue3").val(),
+                  "inline": ($("#fieldInline3").prop("checked")) ? true : false
+                }
+              ],
+              "footer": {
+                "text": $("#footerText").val()
+              }
+            }
+          ]
+        };
+
+        $.post(webhookUrl, { "payload_json": JSON.stringify(embed) }, function(data, status) {
+          console.log("Data: " + data + "\nStatus: " + status);
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Discord Embed Creator</h1>
+  <form>
+    <label for="webhookUrl">Webhook URL:</label><br>
+    <input type="text" id="webhookUrl" name="webhookUrl" required><br><br>
+
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username"><br><br>
+
+    <label for="avatarUrl">Avatar URL:</label><br>
+    <input type="text" id="avatarUrl" name="avatarUrl"><br><br>
+
+    <label for="content">Content:</label><br>
+    <input type="text" id="content" name="content"><br><br>
+
+    <h2>Embed Settings:</h2>
+
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title"><br><br>
+
+    <label for="description">Description:</label><br>
+    <textarea id="description" name="description"></textarea><br><br>
+
+    <label for="color">Color:</label><br>
+    <input type="text" id="color" name="color" placeholder="Hex color code"><br><br>
+
+    <h3>Fields:</h3>
+
+    <label for="fieldName1">Field 1 Name:</label><br>
+    <input type="text" id="fieldName1" name="fieldName1"><br><br>
+
+    <label for="fieldValue1">Field 1 Value:</label><br>
+    <input type="text" id="fieldValue1" name="fieldValue1"><br><br>
+
+    <label for="fieldInline1">Field 1 Inline:</label>
+    <input type="checkbox" id="fieldInline1" name="fieldInline1"><br><br>
+
+    <label for="fieldName2">Field 2 Name:</label><br>
+    <input type="text" id="fieldName2" name="fieldName2"><br><br>
+
+    <label for="fieldValue2">Field 2 Value:</label><br>
+    <input type="text" id="fieldValue2" name="fieldValue2"><br><br>
+
+    <label for="fieldInline2">Field 2 Inline:</label>
+    <input type="checkbox" id="fieldInline2" name="fieldInline2"><br><br>
+
+    <label for="fieldName3">Field 3 Name:</label><br>
+    <input type="text" id="fieldName3" name="fieldName3"><br><br>
+
+    <label for="fieldValue3">Field 3 Value:</label><br>
+    <input type="text" id="fieldValue3" name="fieldValue3"><br><br>
+
+    <label for="fieldInline3">Field 3 Inline:</label>
+    <input type="checkbox" id="fieldInline3" name="fieldInline3"><br><br>
+
+    <label for="footerText">Footer Text:</label><br>
+    <input type="text" id="footerText" name="footerText"><br><br>
+
+    <input type="button" id="sendButton" value="Send">
+  </form>
+</body>
+</html>
